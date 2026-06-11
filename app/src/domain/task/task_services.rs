@@ -2,7 +2,10 @@ use leptos::server;
 use leptos::server_fn::ServerFnError;
 
 use crate::components::ui::select_input::SelectOption;
+
+#[cfg(feature = "ssr")]
 use crate::database::tasks;
+
 use crate::domain::task::model::task::Task;
 
 #[server]
@@ -29,6 +32,7 @@ pub async fn get_task(id: i32) -> Result<Task, ServerFnError> {
     Ok(Task::default())
 }
 
+#[cfg(feature = "ssr")]
 fn build_task(db_task: tasks::Model) -> Task {
     Task {
         id: Some(db_task.id),
