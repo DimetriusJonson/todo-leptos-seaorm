@@ -1,32 +1,21 @@
 use std::time::Duration;
 
+use anyhow::anyhow;
 use app::common::DbPool;
 use log::info;
-use sqlx::migrate::MigrateDatabase;
-use sqlx::{Sqlite, SqlitePool};
-use sea_orm::{ConnectOptions, Database, DbErr};
+use sea_orm::{ConnectOptions, Database};
 
-/*
-#[cfg(feature = "ssr")]
-pub async fn create_pool() -> DbPool {
-    let database_url = std::env::var("DATABASE_URL").expect("no database url specify");
-    let pool = sqlx::postgres::PgPoolOptions::new()
-        .min_connections(1)
-        .max_connections(3)
-        .connect(database_url.as_str())
-        .await
-        .expect("could not connect to database_url");
+pub async fn create_db_pool() -> anyhow::Result<DbPool> {
+    #[cfg(feature = "sqlx-postgres")]
+    let db_conn = create_postgres_pool().await;
 
-    sqlx::migrate!("./migrations/postgres")
-        .run(&pool)
-        .await
-        .expect("migrations failed");
+    #[cfg(feature = "sqlx-sqlite")]
+    let db_conn = create_sqlite_pool().await;
 
-    pool
+    db_conn
 }
- */
 
- pub async fn create_db_pool() -> Result<DbPool, DbErr> {
+async fn create_common_pool() -> anyhow::Result<DbPool> {
     let database_url = std::env::var("DATABASE_URL").expect("no database url specify");
     info!("database_url={}", database_url);
 
@@ -41,16 +30,42 @@ pub async fn create_pool() -> DbPool {
             .clone(),
     )
     .await
+    .map_err(|err| anyhow!(err))
 }
 
+#[cfg(feature = "sqlx-sqlite")]
 pub async fn create_sqlite_pool() -> anyhow::Result<DbPool> {
+    use sea_orm::SqlxSqliteConnector;
+    use sqlx::migrate::MigrateDatabase;
+    use sqlx::sqlite::SqliteConnectOptions;
+    use sqlx::{Sqlite, SqlitePool};
+    use std::str::FromStr;
+
     let database_url = std::env::var("DATABASE_URL").expect("no database url specify");
 
     if Sqlite::database_exists(&database_url).await? {
-        Ok(create_db_pool().await?)
+        Ok(create_common_pool().await?)
     } else {
-        let db = SqlitePool::connect(&database_url).await?;
-        sqlx::migrate!("migrations/sqlite").run(&db).await.expect("migrations failed");
-        Ok(create_db_pool().await?)
+        let pool = SqlxSqliteConnector::from_sqlx_sqlite_pool(
+            SqlitePool::connect_with(
+                SqliteConnectOptions::from_str(&database_url)?.create_if_missing(true),
+            )
+            .await?,
+        );
+
+        sqlx::migrate!("migrations/sqlite").run(pool.get_sqlite_connection_pool()).await.expect("migrations failed");
+        Ok(create_common_pool().await?)
     }
+}
+
+#[cfg(feature = "sqlx-postgres")]
+async fn create_postgres_pool() -> anyhow::Result<DbPool> {
+    let pool = create_common_pool().await?;
+
+    sqlx::migrate!("migrations/postgres")
+        .run(pool.get_postgres_connection_pool())
+        .await
+        .expect("migrations failed");
+
+    Ok(pool)
 }

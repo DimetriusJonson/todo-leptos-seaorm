@@ -38,7 +38,7 @@ fn build_task(db_task: tasks::Model) -> Task {
         id: Some(db_task.id),
         title: Some(db_task.title),
         description: db_task.description,
-        completed_at: db_task.completed_at,
+        completed_at: db_task.completed_at.map(|d|d.to_rfc2822()),
         priority: db_task.priority,
     }
 }

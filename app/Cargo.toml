@@ -20,6 +20,7 @@ validator.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 tw_merge.workspace = true
+anyhow.workspace = true
 
 chrono = { workspace = true, optional = true }
 tracing = { workspace = true, optional = true }
@@ -29,7 +30,6 @@ wasm-bindgen = { workspace = true, optional = true }
 console_error_panic_hook = { workspace = true, optional = true }
 axum = { workspace = true, optional = true }
 leptos_axum = { workspace = true, optional = true }
-sqlx = { workspace = true, optional = true }
 tokio = { workspace = true, optional = true }
 tower = { workspace = true, optional = true }
 tower-http = { workspace = true, optional = true }
@@ -46,7 +46,6 @@ hydrate = ["leptos/hydrate", "dep:console_error_panic_hook", "dep:wasm-bindgen"]
 ssr = [
     "dep:axum",
     "dep:leptos_axum",
-    "dep:sqlx",
     "dep:sea-orm",
     "dep:tokio",
     "dep:tower",

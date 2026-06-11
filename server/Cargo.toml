@@ -5,6 +5,12 @@ edition = "2024"
 resolver = "2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = ["sqlx-sqlite"]
+#default = ["sqlx-postgres"]
+sqlx-postgres = ["sea-orm/sqlx-postgres"]
+sqlx-sqlite = ["sea-orm/sqlx-sqlite"]
+
 [dependencies]
 anyhow.workspace = true
 axum-macros.workspace = true
@@ -13,8 +19,8 @@ dotenv.workspace = true
 http.workspace = true
 leptos_axum.workspace = true
 log.workspace = true
-sqlx.workspace = true
 sea-orm.workspace = true
+sqlx.workspace = true
 tokio.workspace = true
 tower-http.workspace = true
 tower.workspace = true

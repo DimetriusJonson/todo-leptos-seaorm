@@ -13,7 +13,7 @@ mod db;
 
 use app_router::build_app_router::build_app_router;
 
-use crate::db::{create_sqlite_pool};
+use crate::db::*;
 
 #[tokio::main(flavor = "multi_thread")]
 //#[tokio::main(flavor = "current_thread")]
@@ -45,7 +45,7 @@ async fn main() -> anyhow::Result<()> {
     let conf = get_configuration(None)?;
     let addr = conf.leptos_options.site_addr;
 
-    let pool = create_sqlite_pool().await?;
+    let pool = create_db_pool().await?;
 
     let app = build_app_router(conf, pool).await?;
     info!("listening on http://{}", &addr);

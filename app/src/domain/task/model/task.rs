@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, Validate)]
-#[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
 pub struct Task {
     pub id: Option<i32>,
     #[validate(required, length(min = 3))]

@@ -9,7 +9,7 @@ pub struct Model {
     pub id: i32,
     pub priority: Option<String>,
     pub title: String,
-    pub completed_at: Option<String>,
+    pub completed_at: Option<DateTimeUtc>,
     #[sea_orm(column_type = "Text", nullable)]
     pub description: Option<String>,
     pub deleted_at: Option<String>,
