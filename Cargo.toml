@@ -1,0 +1,86 @@
+[workspace]
+resolver = "2"
+members = ["app", "server"]
+
+[workspace.dependencies]
+
+anyhow = "1"
+axum = { version = "0.8", features = ["macros"] }
+axum-macros = "0.4"
+axum-extra = { version = "0.12.6", features = ["cookie"] }
+console_error_panic_hook = "0.1"
+dotenv = "0.15"
+http = "1"
+leptos = { version = "0.8" }
+leptos_axum = "0.8"
+leptos_meta = "0.8"
+leptos_router = { version = "0.8" }
+log = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0.149"
+validator = { version = "0.20.0", features = ["derive"]}
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite", "chrono", "macros", "json"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["fs", "trace", "compression-gzip"] }
+tracing = "0.1"
+tracing-log = "0.2"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1.23.1", features = ["v4", "fast-rng", "js"] }
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3"}
+jsonwebtoken = { version = "10.3.0", features = ["rust_crypto"] }
+chrono = { version = "0.4.44", features = ["serde"] }
+bcrypt = { version = "0.19.0" }
+dotenvy = { version = "0.15.7" }
+tw_merge = { version = "0.1", features = ["variant", "debug"]}
+sea-orm = { version = "1.1.19", features = ["debug-print", "sqlx-sqlite"] }
+
+
+[[workspace.metadata.leptos]]
+# The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
+output-name = "todo_leptos"
+
+name = "todo_leptos"
+bin-package = "server"
+lib-package = "app"
+site-root = "site"
+assets-dir = "public"
+site-pkg-dir = "pkg"
+
+tailwind-input-file = "style/tailwind.css"
+#style-file = "style/main.scss"
+
+site-addr = "127.0.0.1:3000"
+reload-port = 3001
+browserquery = "defaults"
+bin-features = []
+bin-default-features = false
+lib-features = ["hydrate"]
+lib-default-features = false
+lib-profile-release = "wasm-release"
+
+# [Optional] Command to use when running end2end tests. It will run in the end2end dir.
+#   [Windows] for non-WSL use "npx.cmd playwright test"
+#   This binary name can be checked in Powershell with Get-Command npx
+end2end-cmd = "npx playwright test"
+end2end-dir = "end2end"
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.release]
+# Optimize for size
+opt-level = "z"      # Optimize for size (or "s" for slightly less aggressive)
+lto = true           # Link-Time Optimization
+codegen-units = 1    # Single codegen unit for better optimization
+#panic = "abort"      # Smaller binary, no unwinding
+strip = true         # Strip symbols
+
+[profile.release.package."*"]
+opt-level = "z"      # Also optimize dependencies for size
+

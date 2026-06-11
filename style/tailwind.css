@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: hsl(39deg 90% 52%);
+  --color-danger: hsl(357deg 77% 70%);
+  --color-danger-bg: rgb(41, 5, 7);
+  --color-dark-bg: hsl(221deg, 14%, 9%);
+  --color-link-dark: hsla(233deg, 100%, 73%, 1);
+  --color-link: hsl(233deg, 100%, 58%);
+  --font-monospace: font-family: "Inconsolata", "Hack", "SF Mono", "Roboto Mono", "Source Code Pro", "Ubuntu Mono", monospace !important;
+}
+
+/****************** Message banner *********************/
+
+.messagebanner {
+  transform: scale(0); 
+  transition: transform 0.3s ease-in-out; 
+}
+
+.messagebanner-show {
+  transition: transform 0.3s ease-in-out; 
+  transform: scale(1);  
+}
+
+/****************** Routing *********************/
+
+.progress-container {
+			position: relative;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 4px;
+			z-index: 9999;
+		}
+
+.progress-container > progress {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+		accent-color: #00b3fff1; 
+    width: 100%;
+    height: 0.2vw; 
+    margin: 0;
+    position: absolute;
+}    
+
+/* 1. CONTAINER BACKGROUND (Chrome, Safari, Edge) */
+.progress-container > progress::-webkit-progress-bar {
+  background-color: #00b3fff1;
+}
+
+/* 2. PROGRESS VALUE BAR (Chrome, Safari, Edge) */
+.progress-container > progress::-webkit-progress-value {
+  background-color: #00b3fff1;
+}
+
+/* 3. PROGRESS VALUE BAR (Firefox alternative) */
+.progress-container > progress::-moz-progress-bar {
+  background-color: #00b3fff1;
+}

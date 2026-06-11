@@ -1,0 +1,9 @@
+target/
+node_modules/
+.vscode/
+src-tauri/
+site/
+justfile
+package-lock.json
+rustfmt.toml
+
