@@ -61,11 +61,11 @@ pub async fn create_sqlite_pool() -> anyhow::Result<DbPool> {
 #[cfg(feature = "sqlx-postgres")]
 async fn create_postgres_pool() -> anyhow::Result<DbPool> {
     let pool = create_common_pool().await?;
-
+/*
     sqlx::migrate!("migrations/postgres")
         .run(pool.get_postgres_connection_pool())
         .await
         .expect("migrations failed");
-
+ */
     Ok(pool)
 }

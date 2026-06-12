@@ -8,7 +8,7 @@ resolver = "2"
 [features]
 #default = ["sqlx-sqlite"]
 default = ["sqlx-postgres"]
-sqlx-postgres = ["sea-orm/sqlx-postgres"]
+sqlx-postgres = ["sea-orm/sqlx-postgres", "sqlx/tls-rustls"]
 sqlx-sqlite = ["sea-orm/sqlx-sqlite"]
 
 [dependencies]

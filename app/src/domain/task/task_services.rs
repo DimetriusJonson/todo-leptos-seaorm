@@ -1,3 +1,5 @@
+#[cfg(feature = "ssr")]
+use chrono::Datelike;
 use leptos::server;
 use leptos::server_fn::ServerFnError;
 
@@ -23,24 +25,13 @@ pub async fn get_task(id: i32) -> Result<Task, ServerFnError> {
         if let Some(task) =
             get_task_from_db(&app_state.pool, id, user.id).await.map_err(ServerFnError::new)?
         {
-            return Ok(build_task(task));
+            return Ok(task.into());
         } else {
             return Err(ApiError::NotFound("Задача не найдена!".to_owned()))?;
         }
     }
 
     Ok(Task::default())
-}
-
-#[cfg(feature = "ssr")]
-fn build_task(db_task: tasks::Model) -> Task {
-    Task {
-        id: Some(db_task.id),
-        title: Some(db_task.title),
-        description: db_task.description,
-        completed_at: db_task.completed_at.map(|d|d.to_rfc2822()),
-        priority: db_task.priority,
-    }
 }
 
 #[server]
@@ -79,7 +70,7 @@ pub async fn get_tasks(
             .await
             .map_err(ServerFnError::new)?
             .into_iter()
-            .map(build_task)
+            .map(|task|task.into())
             .collect();
 
         if filter.is_some() {
@@ -136,7 +127,7 @@ pub async fn update_or_create_task(task: Task) -> Result<Task, ServerFnError> {
         };
 
         leptos_axum::redirect(&format!("/task/{}", saved_task.id));
-        return Ok(build_task(saved_task));
+        return Ok(saved_task.into());
     }
 
     Ok(task)
@@ -155,7 +146,7 @@ pub async fn change_completed_task(id: i32, completed: bool) -> Result<Task, Ser
         if let Some(found_task) =
             get_task_from_db(&app_state.pool, id, user.id).await.map_err(ServerFnError::new)?
         {
-            let mut task = build_task(found_task);
+            let mut task: Task = found_task.into();
             task.completed_at = match completed {
                 true => Some("on".to_owned()),
                 false => None,
@@ -164,7 +155,7 @@ pub async fn change_completed_task(id: i32, completed: bool) -> Result<Task, Ser
             let saved_task = update_task_in_db(&app_state.pool, task.fix_completed_at(), user.id)
                 .await
                 .map_err(ServerFnError::new)?;
-            return Ok(build_task(saved_task));
+            return Ok(saved_task.into());
         } else {
             return Err(ApiError::NotFound("Задача не найдена!".to_owned()))?;
         }
@@ -206,3 +197,27 @@ fn sort_to_option(sort_kind: String) -> SelectOption {
         _ => (None, "Не выбран".to_owned()),
     }
 }
+
+#[cfg(feature = "ssr")]
+impl From<tasks::Model> for Task {
+    fn from(db_task: tasks::Model) -> Self {
+        let completed_at = match db_task.completed_at {
+            Some(completed_at) => {
+                if completed_at.year() == 1950 {
+                    None
+                } else {
+                    Some(completed_at.to_rfc2822())
+                }
+            }
+            None => None,
+        };
+        Task {
+            id: Some(db_task.id),
+            title: Some(db_task.title),
+            description: db_task.description,
+            completed_at: completed_at,
+            priority: db_task.priority,
+        }
+    }
+}
+
