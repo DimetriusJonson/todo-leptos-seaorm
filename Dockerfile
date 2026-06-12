@@ -15,10 +15,8 @@ COPY public ./public
 COPY style ./style
 COPY Cargo.toml ./
 COPY Cargo.lock ./
-COPY .env.docker ./.env
 
 RUN cargo leptos build --release -vv
-
 
 ### Additional compression with UPX
 FROM alpine:3.19 AS compressor
