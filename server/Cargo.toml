@@ -6,8 +6,8 @@ resolver = "2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = ["sqlx-sqlite"]
-#default = ["sqlx-postgres"]
+#default = ["sqlx-sqlite"]
+default = ["sqlx-postgres"]
 sqlx-postgres = ["sea-orm/sqlx-postgres"]
 sqlx-sqlite = ["sea-orm/sqlx-sqlite"]
 
