@@ -26,7 +26,12 @@ pub fn TaskEditPage() -> impl IntoView {
 
     let task_resource = Resource::new_blocking(
         move || params.read().get("id"),
-        async move |id| get_task(id.unwrap_or_default().parse().unwrap_or(0)).await,
+        async move |id| { 
+            match id {
+                Some(id) => get_task(id.parse().expect("Failed parse id")).await,
+                None => Ok(Task::default()),
+            }
+        }
     );
     let priorities_resource = OnceResource::new(get_priorities());
 
