@@ -3,7 +3,7 @@ use std::time::Duration;
 use leptos::prelude::*;
 use leptos_meta::{Meta, MetaTags, Stylesheet, Title, provide_meta_context};
 use leptos_router::components::{Outlet, ParentRoute, Route, Router, Routes, RoutingProgress};
-use leptos_router::hooks::{use_navigate, use_query_map};
+use leptos_router::hooks::use_query_map;
 use leptos_router::{StaticSegment, path};
 
 use crate::components::layout::message_banner::MessageBanner;
@@ -74,12 +74,9 @@ pub fn App() -> impl IntoView {
                         <MessageBanner />
 
                         <ErrorBoundary fallback=move |errors| {
-                            let navigate = use_navigate();
-
                             let errors_clear = errors.clone();
                             let on_click = move |_| {
                                 errors_clear.set(Errors::default());
-                                navigate("/", Default::default());
                             };
 
                             view! {
