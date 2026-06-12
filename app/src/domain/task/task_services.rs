@@ -215,7 +215,7 @@ impl From<tasks::Model> for Task {
             id: Some(db_task.id),
             title: Some(db_task.title),
             description: db_task.description,
-            completed_at: completed_at,
+            completed_at,
             priority: db_task.priority,
         }
     }

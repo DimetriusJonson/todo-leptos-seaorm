@@ -51,15 +51,16 @@ pub fn TaskDetails(task: Task) -> impl IntoView {
 
     let messages = use_context::<Messages>().expect("Cant get messages context!");
 
-    Effect::new(move |_| match delete_task.value().get() {
-        Some(res) => match res {
-            Ok(_) => {
-                show_info("Задача удалена!".to_owned(), messages);
-                delete_task.clear();
+    Effect::new(move |_| {
+        if let Some(res) = delete_task.value().get() {
+            match res {
+                Ok(_) => {
+                    show_info("Задача удалена!".to_owned(), messages);
+                    delete_task.clear();
+                }
+                Err(err) => show_server_error(err, messages),
             }
-            Err(err) => show_server_error(err, messages),
-        },
-        None => (),
+        }
     });
 
     view! {

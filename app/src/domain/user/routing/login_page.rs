@@ -35,12 +35,11 @@ pub fn LoginPage() -> impl IntoView {
     });
     let common_error = move || ui_build_common_error(validation_errors);
 
-    Effect::new(move |_| match login.value().get() {
-        Some(Ok(_)) => {
+    Effect::new(move |_| {
+        if let Some(Ok(_)) = login.value().get() {
             show_info("Вы вошли!".to_owned(), messages);
             login.clear();
         }
-        _ => (),
     });
 
     view! {

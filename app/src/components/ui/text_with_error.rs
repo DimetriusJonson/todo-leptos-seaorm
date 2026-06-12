@@ -17,7 +17,7 @@ pub fn TextWithError(
     view! {
         <div class="w-full">
             <input
-                aria-invalid={move || (validation_errors.read().get(&field_name).map_or(false, |v|!v.is_empty())).to_string()}
+                aria-invalid={move || (validation_errors.read().get(&field_name).is_some_and(|v|!v.is_empty())).to_string()}
                 class={"w-full px-4 py-2 rounded-md shadow-inner 
             text-gray-700 
             placeholder-gray-400 

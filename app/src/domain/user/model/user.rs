@@ -14,7 +14,7 @@ pub struct User{
 pub fn is_valid_username(username: &str) -> Result<(), ValidationError> {
     let len = username.len();
     // 1. Length constraint (e.g., 3 to 16 characters)
-    if len < 3 || len > 16 {
+    if !(3..=16).contains(&len) {
         let mut error = ValidationError::new("length");
         error.add_param::<i32>(Cow::Borrowed("min"), &3);
         error.add_param::<i32>(Cow::Borrowed("max"), &16);

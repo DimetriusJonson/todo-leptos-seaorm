@@ -39,7 +39,7 @@ pub fn TaskEditPage() -> impl IntoView {
             <Transition fallback=move || view! { <TaskEditForm task={Task::default()} priorities={None} disabled=true /> }>
                 {move || Suspend::new(async move {
                     let priorities = priorities_resource.await.ok();
-                    if let Some(_) = params.read().get("id") {
+                    if params.read().get("id").is_some() {
                         task_resource.get().map(|data| data.map(|task| view! { <TaskEditForm task priorities disabled=false /> }))
                     } else {
                         Some(Ok(view! { <TaskEditForm task={Task::default()} priorities disabled=false /> }))
@@ -69,12 +69,11 @@ pub fn TaskEditForm(
 
     let messages = use_context::<Messages>().expect("Cant get messages context!");
 
-    Effect::new(move |_| match update_or_create_task.value().get() {
-        Some(Ok(_)) => {
+    Effect::new(move |_| {
+        if let Some(Ok(_)) = update_or_create_task.value().get() {
             show_info("Задача сохранена!".to_owned(), messages);
             update_or_create_task.clear();
         }
-        _ => (),
     });
 
     view! {

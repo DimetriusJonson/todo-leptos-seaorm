@@ -97,7 +97,7 @@ pub mod db {
         }
 
         let completed_at = match &patch.completed_at {
-            Some(completed_at) => Some(parse_to_datetime_utc(&completed_at)?),
+            Some(completed_at) => Some(parse_to_datetime_utc(completed_at)?),
             None => None,
         };
 
@@ -118,7 +118,7 @@ pub mod db {
         user_id: i32,
     ) -> anyhow::Result<tasks::Model> {
         let completed_at = match &task.completed_at {
-            Some(completed_at) => Some(parse_to_datetime_utc(&completed_at)?),
+            Some(completed_at) => Some(parse_to_datetime_utc(completed_at)?),
             None => None,
         };
 
