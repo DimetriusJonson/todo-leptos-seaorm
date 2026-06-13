@@ -38,7 +38,14 @@ pub fn TextArea(
         dark:active:border-indigo-400 
         dark:focus:ring-indigo-400 
         dark:focus:border-indigo-400
-        dark:active:ring-indigo-400 "
+        dark:active:ring-indigo-400 
+        
+        disabled:text-weak
+        disabled:bg-disabled-bg
+        disabled:dark:border-bg-dark-bg
+        disabled:border-bg-white
+        disabled:placeholder:text-gray-500/30
+        "
             rows="4"
             cols="50".to_ascii_lowercase()
             name=name

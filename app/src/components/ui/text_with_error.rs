@@ -20,7 +20,7 @@ pub fn TextWithError(
                 aria-invalid={move || (validation_errors.read().get(&field_name).is_some_and(|v|!v.is_empty())).to_string()}
                 class={"w-full px-4 py-2 rounded-md shadow-inner 
             text-gray-700 
-            placeholder-gray-400 
+            placeholder:text-gray-500 
             dark:text-gray-50 
 
             autofill:bg-blue-300/20  
@@ -60,7 +60,16 @@ pub fn TextWithError(
             aria-invalid:dark:focus:ring-danger 
             aria-invalid:dark:focus:border-danger 
             aria-invalid:dark:active:ring-danger 
-            aria-invalid:dark:active:border-danger"}
+            aria-invalid:dark:active:border-danger
+
+            disabled:text-weak
+            disabled:bg-disabled-bg
+            disabled:dark:border-bg-dark-bg
+            disabled:border-bg-white
+            disabled:placeholder:text-gray-500/30
+
+
+            "}
                 type=input_type
                 id=name.to_owned()
                 name=name.to_owned()

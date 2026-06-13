@@ -40,7 +40,15 @@ pub fn SelectInput(
             dark:active:ring-indigo-400 
             dark:active:border-indigo-400 
             dark:focus:ring-indigo-400 
-            dark:focus:border-indigo-400"}
+            dark:focus:border-indigo-400
+
+            disabled:text-weak
+            disabled:bg-disabled-bg
+            disabled:dark:border-bg-dark-bg
+            disabled:border-bg-white
+            disabled:placeholder:text-gray-500/30
+
+            "}
                 name = {name}
                 prop:value = {value.to_owned()}
                 on:change=move |ev| {

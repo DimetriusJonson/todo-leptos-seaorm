@@ -7,6 +7,8 @@
   --color-dark-bg: hsl(221deg, 14%, 9%);
   --color-link-dark: hsla(233deg, 100%, 73%, 1);
   --color-link: hsl(233deg, 100%, 58%);
+  --color-weak: hsl(221deg, 14%, 53%);
+  --color-disabled-bg: hsl(221deg, 14%, 14%);
   --font-monospace: font-family: "Inconsolata", "Hack", "SF Mono", "Roboto Mono", "Source Code Pro", "Ubuntu Mono", monospace !important;
 }
 
