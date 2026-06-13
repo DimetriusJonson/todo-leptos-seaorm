@@ -11,7 +11,8 @@ pub mod db {
 
     use crate::common::DbPool;
 
-    use crate::database::tasks::{self, Entity as Tasks};
+    use crate::common::api_error::ApiError;
+use crate::database::tasks::{self, Entity as Tasks};
     use crate::domain::task::model::task::Task;
 
     pub async fn get_tasks_from_db(
@@ -104,7 +105,7 @@ pub mod db {
         active_task.completed_at.set_if_not_equals(completed_at);
 
         if !active_task.is_changed() {
-            return Err(anyhow!(sea_orm::DbErr::RecordNotUpdated));
+            return Err(anyhow!(ApiError::Db("Нечего менять!".to_owned())));
         }
 
         let active_task = active_task.update(pool).await?;

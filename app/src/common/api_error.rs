@@ -13,6 +13,7 @@ pub enum ApiError {
     NotFound(String),
     Validation(ValidationErrors),
     Network(String),
+    Db(String),
     ServerFn(ServerFnErrorErr),
 }
 
@@ -37,6 +38,7 @@ impl Display for ApiError {
         match self {
             Self::UnAuthorized(msg) => write!(f, "Пользователь не авторизован. {}", msg),
             Self::NotFound(msg) => write!(f, "{}", msg),
+            Self::Db(msg) => write!(f, "{}", msg),
             Self::Network(msg) => write!(f, "Ошибка запроса: {}.", msg),
             Self::Validation(errors) => {
                 write!(f, "{}", serde_json::to_string(&errors).expect("Failed serialize error!"))
