@@ -36,8 +36,6 @@ pub fn TasksList(filter: ReadSignal<Option<String>>) -> impl IntoView {
                 set_change_completed_in_progress.set(false);
                 match res {
                     Ok(saved_task) => {
-                        checkbox.set_checked(saved_task.completed_at.is_some());
-
                         if let Some(Ok(tasks)) = tasks_resource.write().as_mut()
                             && let Some(found_task) = tasks.iter_mut().find(|t| t.id == Some(id))
                         {
@@ -75,9 +73,10 @@ pub fn TasksList(filter: ReadSignal<Option<String>>) -> impl IntoView {
                     if !tasks.is_empty() {
                         {
                             tasks
-                                .iter()
+                                .into_iter()
                                 .filter(|task| filter_task(task, &filter.get()))
                                 .map(|task| {
+                                    let completed_at = task.completed_at.to_owned();
                                     view! {
                                         <tr class="dark:even:bg-gray-800/30 border-b dark:border-gray-600">
                                             <td class="px-4 py-2">{task.priority_name()}</td>
@@ -86,8 +85,8 @@ pub fn TasksList(filter: ReadSignal<Option<String>>) -> impl IntoView {
                                                     class_name="is-medium".to_owned()
                                                     name=format!("completed_{}", task.id.unwrap())
                                                     label="Изменить признак завершения".to_owned()
-                                                    value=task.completed_at.is_some()
-                                                    title=match &task.completed_at {
+                                                    value=move || task.completed_at.is_some()
+                                                    title=move || match completed_at.to_owned() {
                                                         Some(completed_at) => completed_at.to_owned(),
                                                         None => "".to_owned(),
                                                     }

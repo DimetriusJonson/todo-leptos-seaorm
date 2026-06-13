@@ -3,12 +3,13 @@ use leptos::prelude::*;
 #[component]
 pub fn Checkbox(
     name: String,
-    title: String,
+    title: impl Fn() -> String + Send + Sync + 'static,
     label: String,
-    value: bool,
+    value: impl Fn() -> bool + Send + Sync + 'static,
     #[prop(optional)] class_name: String,
     disabled: impl Fn() -> bool + Send + Sync + 'static,
 ) -> impl IntoView {
+    let value_memo = Memo::new(move |_| value());
     view! {
         <div class="relative items-center">
             <input class={format!("peer h-8 w-8 cursor-pointer appearance-none rounded border-2
@@ -30,7 +31,8 @@ pub fn Checkbox(
             id={name.to_owned()}
             type="checkbox"
             aria-label={label.to_owned()}
-            checked=value
+            checked=value_memo
+            prop:checked=value_memo
             name={name.to_owned()}
             title=title
             disabled=disabled
