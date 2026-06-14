@@ -86,7 +86,7 @@ pub fn TasksList(filter: ReadSignal<Option<String>>) -> impl IntoView {
                                                     name=format!("completed_{}", task.id.unwrap())
                                                     label="Изменить признак завершения".to_owned()
                                                     value=move || task.completed_at.is_some()
-                                                    title=move || match completed_at.to_owned() {
+                                                    title=move || match &completed_at {
                                                         Some(completed_at) => completed_at.to_owned(),
                                                         None => "".to_owned(),
                                                     }
