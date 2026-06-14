@@ -1,5 +1,3 @@
-#[cfg(feature = "ssr")]
-use chrono::Datelike;
 use leptos::server;
 use leptos::server_fn::ServerFnError;
 
@@ -206,7 +204,9 @@ impl From<tasks::Model> for Task {
                 if completed_at.year() == 1950 {
                     None
                 } else {
-                    Some(completed_at.to_rfc2822())
+                    Some(completed_at
+                        .format(&time::format_description::well_known::Rfc2822)
+                        .unwrap_or_else(|_| panic!("failed format completed_at={}", completed_at)))
                 }
             }
             None => None,

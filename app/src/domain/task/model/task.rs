@@ -17,12 +17,14 @@ pub struct Task {
 impl Task {
     #[cfg(feature = "ssr")]
     pub fn fix_completed_at(&mut self) -> &mut Self {
-        use chrono::Utc;
+        use time::OffsetDateTime;
 
         if let Some(completed_at) = &self.completed_at
             && (completed_at == "on" || completed_at == "true" || completed_at == "checked")
         {
-            self.completed_at = Some(Utc::now().fixed_offset().to_rfc2822());
+            let now_utc = OffsetDateTime::now_utc();
+            let rfc2822_string = now_utc.format(&time::format_description::well_known::Rfc2822).expect("failed format now utc");
+            self.completed_at = Some(rfc2822_string);
         }
 
         self

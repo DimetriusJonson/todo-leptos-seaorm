@@ -2,9 +2,9 @@
 pub mod db {
 
     use anyhow::anyhow;
-    use chrono::{DateTime, Utc};
     use sea_orm::ActiveValue::Set;
-    use sea_orm::entity::prelude::DateTimeUtc;
+    use time::OffsetDateTime;
+
     use sea_orm::{
         ActiveModelTrait, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter, TryIntoModel,
     };
@@ -12,7 +12,7 @@ pub mod db {
     use crate::common::DbPool;
 
     use crate::common::api_error::ApiError;
-use crate::database::tasks::{self, Entity as Tasks};
+    use crate::database::tasks::{self, Entity as Tasks};
     use crate::domain::task::model::task::Task;
 
     pub async fn get_tasks_from_db(
@@ -66,7 +66,13 @@ use crate::database::tasks::{self, Entity as Tasks};
             .unwrap();
 
         let mut active_task = task.into_active_model();
-        active_task.deleted_at = Set(Some(Utc::now().fixed_offset().to_rfc2822()));
+
+        let now = time::OffsetDateTime::now_utc();
+        let rfc2822_string = time::OffsetDateTime::now_utc()
+            .format(&time::format_description::well_known::Rfc2822)
+            .unwrap_or_else(|_| panic!("failed format now={}", now));
+        active_task.deleted_at = Set(Some(rfc2822_string));
+
         let saved_task = active_task.save(pool).await?;
 
         Ok(saved_task.id.unwrap())
@@ -104,7 +110,8 @@ use crate::database::tasks::{self, Entity as Tasks};
             None => None,
         };
 
-        if (new_completed_at.is_some() && old_completed_at.is_none()) || new_completed_at.is_none() {
+        if (new_completed_at.is_some() && old_completed_at.is_none()) || new_completed_at.is_none()
+        {
             active_task.completed_at.set_if_not_equals(new_completed_at);
         }
 
@@ -142,9 +149,10 @@ use crate::database::tasks::{self, Entity as Tasks};
         saved_task.try_into_model().map_err(|err| anyhow!(err))
     }
 
-    fn parse_to_datetime_utc(rfc2822_str: &str) -> Result<DateTimeUtc, chrono::ParseError> {
-        let parsed_dt = DateTime::parse_from_rfc2822(rfc2822_str)?;
-        let utc_dt: DateTime<Utc> = parsed_dt.with_timezone(&Utc);
-        Ok(utc_dt)
+    fn parse_to_datetime_utc(rfc2822_str: &str) -> Result<OffsetDateTime, time::error::Parse> {
+        Ok(<time::OffsetDateTime>::parse(
+            rfc2822_str,
+            &time::format_description::well_known::Rfc2822,
+        )?)
     }
 }

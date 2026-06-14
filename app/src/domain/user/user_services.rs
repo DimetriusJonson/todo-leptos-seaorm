@@ -9,7 +9,6 @@ use crate::domain::user::model::user::User;
 pub mod ssr {
     use std::env;
 
-    use chrono::{Duration, Utc};
     use http::Extensions;
     use jsonwebtoken::errors::ErrorKind;
     use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
@@ -29,14 +28,14 @@ pub mod ssr {
     }
 
     pub fn create_token(user_id: i32, user_name: String) -> Result<String, ServerFnError> {
-        let now = Utc::now();
-        let exp = now + Duration::hours(7 * 24);
+        let now = time::OffsetDateTime::now_utc();
+        let exp = now + time::Duration::hours(7 * 24);
 
         let claims = Claims {
             user_id,
             user_name,
-            exp: exp.timestamp() as usize,
-            iat: now.timestamp() as usize,
+            exp: exp.unix_timestamp() as usize,
+            iat: now.unix_timestamp() as usize,
         };
         let secret = env::var("JWT_SECRET").expect("JWT_SECRET must be set.");
 
