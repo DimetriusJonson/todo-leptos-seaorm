@@ -124,6 +124,10 @@ pub fn TaskEditForm(
                                 name="task[completed_at]".to_owned()
                                 value=task.completed_at.is_some()
                                 label="Завершена".to_owned()
+                                title=move || match task.completed_at.to_owned() {
+                                                        Some(completed_at) => completed_at.to_owned(),
+                                                        None => "".to_owned(),
+                                                    }
                             />
                         </div>
                     </div>

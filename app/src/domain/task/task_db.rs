@@ -85,6 +85,8 @@ use crate::database::tasks::{self, Entity as Tasks};
             .await?
             .unwrap();
 
+        let old_completed_at = task.completed_at.to_owned();
+
         let mut active_task = task.into_active_model();
 
         if let Some(title) = &patch.title {
@@ -97,12 +99,14 @@ use crate::database::tasks::{self, Entity as Tasks};
             active_task.priority.set_if_not_equals(Some(priority.to_owned()));
         }
 
-        let completed_at = match &patch.completed_at {
+        let new_completed_at = match &patch.completed_at {
             Some(completed_at) => Some(parse_to_datetime_utc(completed_at)?),
             None => None,
         };
 
-        active_task.completed_at.set_if_not_equals(completed_at);
+        if (new_completed_at.is_some() && old_completed_at.is_none()) || new_completed_at.is_none() {
+            active_task.completed_at.set_if_not_equals(new_completed_at);
+        }
 
         if !active_task.is_changed() {
             return Err(anyhow!(ApiError::Db("Нечего менять!".to_owned())));
