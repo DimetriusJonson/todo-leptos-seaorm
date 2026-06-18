@@ -31,7 +31,7 @@ pub fn CreateUserPage() -> impl IntoView {
 
     Effect::new(move |_| {
         if let Some(Ok(user)) = create_user.value().get() {
-            show_info(format!("Создан пользователь {}", &user.username.unwrap()), messages);
+            show_info(format!("Создан пользователь {}", user.username.unwrap()), messages);
             create_user.clear();
         }
     });

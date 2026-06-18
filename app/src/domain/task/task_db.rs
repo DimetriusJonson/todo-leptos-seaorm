@@ -150,9 +150,9 @@ pub mod db {
     }
 
     fn parse_to_datetime_utc(rfc2822_str: &str) -> Result<OffsetDateTime, time::error::Parse> {
-        Ok(<time::OffsetDateTime>::parse(
+        <time::OffsetDateTime>::parse(
             rfc2822_str,
             &time::format_description::well_known::Rfc2822,
-        )?)
+        )
     }
 }

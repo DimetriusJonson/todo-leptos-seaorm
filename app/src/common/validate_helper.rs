@@ -161,7 +161,7 @@ where
                     errors = validation_errors_kind_to_list(errors_kind);
                 }
             }
-            Err(err) => console_log(&format!("from_value error={}", &err)),
+            Err(err) => console_log(&format!("from_value error={}", err)),
         }
     }
     errors

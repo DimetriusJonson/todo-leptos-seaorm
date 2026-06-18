@@ -48,7 +48,7 @@ async fn main() -> anyhow::Result<()> {
     let pool = create_db_pool().await?;
 
     let app = build_app_router(conf, pool).await?;
-    info!("listening on http://{}", &addr);
+    info!("listening on http://{}", addr);
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, app).await.unwrap();
     Ok(())

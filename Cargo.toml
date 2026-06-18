@@ -84,3 +84,6 @@ strip = true         # Strip symbols
 [profile.release.package."*"]
 opt-level = "z"      # Also optimize dependencies for size
 
+[profile.dev]
+opt-level = 0
+debug = "line-tables-only"

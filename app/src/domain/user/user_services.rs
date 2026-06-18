@@ -99,7 +99,7 @@ pub async fn create_user(params: CreateUserParams) -> Result<User, ServerFnError
 
     let validate_result = params.validate();
     if let Err(validation_errors) = validate_result {
-        return Err(ApiError::validation(validation_errors))?;
+        Err(ApiError::validation(validation_errors))?
     }
 
     let app_state = use_app_state()?;
@@ -109,11 +109,11 @@ pub async fn create_user(params: CreateUserParams) -> Result<User, ServerFnError
         .map_err(ServerFnError::new)?
         .is_some()
     {
-        return Err(ApiError::validation_field(
+        Err(ApiError::validation_field(
             "name",
             "UserAlreadyExist",
             "Пользователь уже существует!",
-        ))?;
+        ))?
     }
 
     let hash_pass = bcrypt::hash(params.password.to_owned().unwrap(), DEFAULT_COST)
@@ -151,7 +151,7 @@ pub async fn login(params: LoginParams) -> Result<User, ServerFnError> {
 
     let validate_result = params.validate();
     if let Err(validation_errors) = validate_result {
-        return Err(ApiError::validation(validation_errors))?;
+        Err(ApiError::validation(validation_errors))?
     }
 
     let app_state = use_app_state()?;

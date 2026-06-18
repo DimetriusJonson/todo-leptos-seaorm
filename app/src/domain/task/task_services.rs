@@ -2,10 +2,8 @@ use leptos::server;
 use leptos::server_fn::ServerFnError;
 
 use crate::components::ui::select_input::SelectOption;
-
 #[cfg(feature = "ssr")]
 use crate::database::tasks;
-
 use crate::domain::task::model::task::Task;
 
 #[server]
@@ -25,7 +23,7 @@ pub async fn get_task(id: i32) -> Result<Task, ServerFnError> {
         {
             return Ok(task.into());
         } else {
-            return Err(ApiError::NotFound("Задача не найдена!".to_owned()))?;
+            Err(ApiError::NotFound("Задача не найдена!".to_owned()))?
         }
     }
 
@@ -68,7 +66,7 @@ pub async fn get_tasks(
             .await
             .map_err(ServerFnError::new)?
             .into_iter()
-            .map(|task|task.into())
+            .map(|task| task.into())
             .collect();
 
         if filter.is_some() {
@@ -98,7 +96,7 @@ pub async fn update_or_create_task(task: Task) -> Result<Task, ServerFnError> {
 
         let validate_result = task.validate();
         if let Err(validation_errors) = validate_result {
-            return Err(ApiError::validation(validation_errors))?;
+            Err(ApiError::validation(validation_errors))?
         }
 
         if let Some(found_task) =
@@ -107,11 +105,11 @@ pub async fn update_or_create_task(task: Task) -> Result<Task, ServerFnError> {
                 .map_err(ServerFnError::new)?
             && Some(found_task.id) != task.id
         {
-            return Err(ApiError::validation_field(
+            Err(ApiError::validation_field(
                 "title",
                 "TaskAlreadyExist",
                 "Задача с таким названием уже существует!",
-            ))?;
+            ))?
         }
 
         let saved_task = if task.id.is_some() {
@@ -155,7 +153,7 @@ pub async fn change_completed_task(id: i32, completed: bool) -> Result<Task, Ser
                 .map_err(ServerFnError::new)?;
             return Ok(saved_task.into());
         } else {
-            return Err(ApiError::NotFound("Задача не найдена!".to_owned()))?;
+            Err(ApiError::NotFound("Задача не найдена!".to_owned()))?
         }
     }
 
@@ -204,9 +202,13 @@ impl From<tasks::Model> for Task {
                 if completed_at.year() == 1950 {
                     None
                 } else {
-                    Some(completed_at
-                        .format(&time::format_description::well_known::Rfc2822)
-                        .unwrap_or_else(|_| panic!("failed format completed_at={}", completed_at)))
+                    Some(
+                        completed_at
+                            .format(&time::format_description::well_known::Rfc2822)
+                            .unwrap_or_else(|_| {
+                                panic!("failed format completed_at={}", completed_at)
+                            }),
+                    )
                 }
             }
             None => None,
@@ -220,4 +222,3 @@ impl From<tasks::Model> for Task {
         }
     }
 }
-
